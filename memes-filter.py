@@ -5,6 +5,7 @@
 import pytesseract
 import os
 import shutil
+import numpy
 
 # ============================================================ CONSTANTS
 DIR_TEXTUAL = "./Textual"
@@ -28,10 +29,16 @@ def count_valid_chars(the_string):
             result += 1
     return result
 
+def clear_screen():
+    print(chr(27)+'[2j')
+    print('\033c')
+    print('\x1bc')
+
 # ============================================================ MAIN SCRIPT
 files = list_all_files_recursevely(DIR_MAIN, DIR_TEXTUAL)
 files.sort()
 total = len(files)
+num_digits = int(numpy.floor(numpy.log(total) / numpy.log(10))) + 1
 counter_positive = 0
 for k in range(total):
     # Reads optically the file
@@ -55,4 +62,8 @@ for k in range(total):
         # Moves the file
         shutil.move(files[k], DIR_TEXTUAL + "/" + file_name + "-" + string_append + "." + file_extension)
     # Print stats
-    print (str(counter_positive).zfill(4) + " - " + str(k + 1).zfill(4) + " - " + str(total).zfill(4))
+    clear_screen()
+    print("Analysed......: " + str(k + 1).rjust(num_digits))
+    print("Positive cases: " + str(counter_positive).rjust(num_digits))
+    print("Total.........: " + str(total).rjust(num_digits))
+
